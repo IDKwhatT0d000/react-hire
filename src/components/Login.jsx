@@ -57,7 +57,7 @@ const Login = () => {
     try {
       const user = await signInWithEmailAndPassword(auth, data.email, data.password);
       if (user) {
-        navigate("/main");
+        navigate("/main/landing");
         toast.success("login successful");
       }
     } catch (error) {
