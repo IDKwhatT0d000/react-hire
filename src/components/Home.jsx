@@ -70,7 +70,7 @@ const Home = () => {
         </div>
 
         <div className="w-full lg:w-1/2 bg-green-500 text-white py-12 flex flex-col items-center text-center gap-4">
-          <h2 className="text-3xl font-semibold">For Students</h2>
+          <h2 className="text-3xl font-semibold">Get Hired</h2>
           <p className="text-lg">Create your profile, explore job opportunities, and apply to top companies with ease.</p>
           <button className="px-6 py-3 bg-white text-green-600 rounded-md hover:bg-gray-200 transition duration-300">
             Explore Opportunities

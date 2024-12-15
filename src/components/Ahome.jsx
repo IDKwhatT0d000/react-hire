@@ -1,12 +1,11 @@
-import React from "react";
+import React from 'react'
+import Asidebar from "./Asidebar";
 import { Outlet } from "react-router-dom";
-import Ssidebar from "./Ssidebar";
 import Navbar from "./Navbar";
-
-const Main = () => {
+const Ahome = () => {
   return (
     <div className="flex h-screen">
-      <Ssidebar />
+      <Asidebar />
       <div className="flex flex-col flex-1 relative">
         <Navbar />
         <div className="p-4 flex-1 overflow-y-auto">
@@ -14,7 +13,7 @@ const Main = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Main;
+export default Ahome
