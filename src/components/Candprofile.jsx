@@ -155,10 +155,6 @@ const Candprofile = () => {
       alert('An error occurred. Please try again.');
     }
   };
-  
-  
-  
-
   // Fetch student data and offers on mount
   useEffect(() => {
     fetchStudent();

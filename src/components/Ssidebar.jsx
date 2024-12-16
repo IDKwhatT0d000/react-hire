@@ -9,10 +9,18 @@ import {
   ArrowLeftEndOnRectangleIcon,
 } from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
-
+import { signOut } from 'firebase/auth';
+import { auth } from './firebase';
 const Ssidebar = () => {
   const navigate = useNavigate();
-
+    const handleLogout = async () => {
+      try {
+        await signOut(auth); // Logs out the user from Firebase
+        navigate('/login'); // Redirect to the login page after logout
+      } catch (error) {
+        console.error('Error during logout:', error);
+      }
+    };
   const navItems = [
     { label: "Home", icon: HomeIcon, path: "/main/landing" },
     { label: "Leaderboard", icon: TrophyIcon, path: "/main/leaderboard" },
@@ -53,7 +61,7 @@ const Ssidebar = () => {
       {/* Logout Button */}
       <div className="flex justify-center">
         <button
-          onClick={() => navigate("/logout")}
+          onClick={handleLogout}
           className="flex items-center gap-3 w-full p-3 rounded-lg bg-red-600 hover:bg-red-500 focus:outline-none"
         >
           <ArrowLeftEndOnRectangleIcon width={30} className="text-white" />

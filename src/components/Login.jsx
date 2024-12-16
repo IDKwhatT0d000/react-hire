@@ -2,9 +2,10 @@ import { GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth, db } from "./firebase";
-import { setDoc, doc ,getDoc } from "firebase/firestore";
+import { setDoc, doc, getDoc } from "firebase/firestore";
 import GoogleButton from "react-google-button";
 import { toast } from "react-toastify";
+
 const Login = () => {
   const navigate = useNavigate();
   const [data, setData] = useState({
@@ -12,6 +13,7 @@ const Login = () => {
     password: "",
   });
 
+  // Google Login function
   const googlelogin = async () => {
     const provider = new GoogleAuthProvider();
   
@@ -22,22 +24,32 @@ const Login = () => {
       if (user) {
         const userDocRef = doc(db, "Users", user.uid);
         const userDoc = await getDoc(userDocRef); 
+        
         if (!userDoc.exists()) {
           await setDoc(userDocRef, {
             name: user.displayName,
             email: user.email,
             uid: user.uid,
-            type:"student",
+            type: "student", // Default type as 'student'
             projects: Math.floor(Math.random() * 10),
             rating: Math.floor(Math.random() * 100),
           });
-          toast.success("account created and logged in!",{
-            position:"top-center"
+          toast.success("Account created and logged in!", {
+            position: "top-center",
           });
         } else {
           toast.success("Welcome back!");
         }
-        navigate("/main");
+        const userData = userDoc.data();
+        if (userData.type === "student") {
+          navigate("/main/landing");
+          toast.success("Welcome, Student!");
+        } else if (userData.type === "admin") {
+          navigate("/admin/landing");
+          toast.success("Welcome, Admin!");
+        } else {
+          toast.error("Invalid user type");
+        }
       }
     } catch (error) {
       console.error("Google login error:", error.message);
@@ -45,6 +57,7 @@ const Login = () => {
     }
   };
 
+  // Handle input changes
   const handlechange = (e) => {
     setData({
       ...data,
@@ -52,16 +65,38 @@ const Login = () => {
     });
   };
 
-  const handleclick = async (e) => {
+  // Email/password login function
+  const handleClick = async (e) => {
     e.preventDefault();
     try {
-      const user = await signInWithEmailAndPassword(auth, data.email, data.password);
+      const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
+      const user = userCredential.user;
+
       if (user) {
-        navigate("/main/landing");
-        toast.success("login successful");
+        // Fetch user details from Firestore
+        const userDocRef = doc(db, "Users", user.uid);
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+
+          // Navigate based on user type
+          if (userData.type === "student") {
+            navigate("/main/landing");
+            toast.success("Welcome, Student!");
+          } else if (userData.type === "admin") {
+            navigate("/admin/landing");
+            toast.success("Welcome, Admin!");
+          } else {
+            toast.error("Invalid user type");
+          }
+        } else {
+          toast.error("User details not found.");
+        }
       }
     } catch (error) {
-      console.log(error.message);
+      console.error("Login error:", error.message);
+      toast.error("Login failed. Please check your credentials.");
     }
   };
 
@@ -123,7 +158,7 @@ const Login = () => {
             <div className="flex justify-center">
               <button
                 type="submit"
-                onClick={handleclick}
+                onClick={handleClick}
                 className="w-1/2 px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1 transition duration-300"
               >
                 Log In
